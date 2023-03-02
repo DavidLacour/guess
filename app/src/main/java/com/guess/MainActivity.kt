@@ -14,13 +14,22 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Cyan
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.text.ExperimentalTextApi
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.input.VisualTransformation
+import androidx.compose.ui.unit.sp
 
 class MainActivity : ComponentActivity() {
+    companion object {
+         val GREETING_BUTTON : String = "GREETING BUTTON"
+         val TEXT_TAG : String = "TEXT_TAG"
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -31,24 +40,29 @@ class MainActivity : ComponentActivity() {
 
     }
 
+    @OptIn(ExperimentalTextApi::class)
     @Composable
     fun simpleButton() {
-        var text by remember { mutableStateOf(TextFieldValue("")) }
+        var text by remember { mutableStateOf(TextFieldValue("enter your name")) }
         var intent = Intent(this, GreetingActivity::class.java)
         Column() {
             Button(onClick = {
-                intent.putExtra("message_key", text.text.toString())
+                intent.putExtra(GreetingActivity.KEY, text.text.toString())
                 startActivity(intent)
             }) {
-                Text(text = "simple Button")
+                Text(text = "GREETING BUTTON")
 
             }
-            TextField(
-                value = text,
-                onValueChange = { newText ->
-                    text = newText
-                }
+            val rainbowColors = listOf(Color.Blue,Color.Red )
+            val brush = remember {
+                Brush.linearGradient(
+                    colors = rainbowColors
+                )
+            }
+            TextField(modifier = Modifier.testTag(TEXT_TAG)
+                ,value = text, onValueChange = { text = it }, textStyle = TextStyle(brush = brush,fontWeight = FontWeight.Bold, fontSize = 30.sp)
             )
+
         }
     }
 }
